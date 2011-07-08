@@ -1,7 +1,19 @@
-
-/**
- * Module dependencies.
- */
+var options = require('optimist')
+    .default('port', 3000)
+    .demand('thriftFile')
+    .argv;
+var thrift_compiler = require('child_process')
+        .exec('thrift --gen js:node ' + options.thriftFile,
+                function(error, stdout, stderr) {
+                    if (error) {
+                        throw new Error('Thrift compile error! ' + error);
+                    }
+                    app.listen(options.port);
+                    console.log(
+                        "Express server listening on port %d in %s mode",
+                        app.address().port, app.settings.env
+                    );
+                });
 
 var express = require('express');
 
@@ -34,5 +46,3 @@ app.get('/', function(req, res){
   });
 });
 
-app.listen(3000);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
